@@ -3,5 +3,7 @@
 ## Checklist do Desafio
 - [x] Criar classe IMC (Peso / Altura)​
 - [x] Ler dados no app​
-- [ ] Calcular IMC ​
-- [ ] Exibir em uma lista
+- [x] Calcular IMC ​
+- [x] Exibir em uma lista
+
+![Calculadora de IMC](./Screenshot.png)

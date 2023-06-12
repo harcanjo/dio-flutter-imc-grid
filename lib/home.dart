@@ -12,14 +12,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController weightController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
-  double? bmi;
+  final List<Map<String, double>> history = [];
 
   void _calculateBMI() {
     double weight = double.parse(weightController.text);
     double height = double.parse(heightController.text);
     IMC imc = IMC(weight: weight, height: height);
+    double bmi = imc.calculate();
     setState(() {
-      bmi = imc.calculate();
+      history.insert(0, {'weight': weight, 'height': height, 'bmi': bmi});
+      if (history.length > 5) {
+        history.removeLast();
+      }
     });
   }
 
@@ -40,6 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               keyboardType: TextInputType.number,
             ),
+            SizedBox(height: 16),
             TextField(
               controller: heightController,
               decoration: const InputDecoration(
@@ -47,11 +52,38 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               keyboardType: TextInputType.number,
             ),
-            ElevatedButton(
-              onPressed: _calculateBMI,
-              child: const Text('Calcular IMC'),
+            SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _calculateBMI,
+                child: const Text('Calcular IMC'),
+              ),
             ),
-            if (bmi != null) Text('IMC: $bmi'),
+            SizedBox(height: 16),
+            if (history.isNotEmpty)
+              Table(
+                border: TableBorder.all(),
+                columnWidths: const {
+                  0: FixedColumnWidth(80),
+                  1: FixedColumnWidth(80),
+                  2: FixedColumnWidth(80),
+                },
+                children: [
+                  TableRow(children: [
+                    const Text('Peso'),
+                    const Text('Altura'),
+                    const Text('IMC'),
+                  ]),
+                  ...history.map((entry) {
+                    return TableRow(children: [
+                      Text(entry['weight'].toString()),
+                      Text(entry['height'].toString()),
+                      Text(entry['bmi']!.toStringAsFixed(2)),
+                    ]);
+                  }).toList(),
+                ],
+              ),
           ],
         ),
       ),
