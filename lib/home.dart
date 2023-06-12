@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatelessWidget {
-  final double bmi;
+import 'calcula_imc.dart';
 
-  const MyHomePage({super.key, required this.bmi});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController heightController = TextEditingController();
+  double? bmi;
+
+  void _calculateBMI() {
+    double weight = double.parse(weightController.text);
+    double height = double.parse(heightController.text);
+    IMC imc = IMC(weight: weight, height: height);
+    setState(() {
+      bmi = imc.calculate();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +29,31 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Calculadora de IMC'),
       ),
-      body: Center(
-        child: Text('IMC: $bmi'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: weightController,
+              decoration: const InputDecoration(
+                labelText: 'Peso (kg)',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: heightController,
+              decoration: const InputDecoration(
+                labelText: 'Altura (m)',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            ElevatedButton(
+              onPressed: _calculateBMI,
+              child: const Text('Calcular IMC'),
+            ),
+            if (bmi != null) Text('IMC: $bmi'),
+          ],
+        ),
       ),
     );
   }
